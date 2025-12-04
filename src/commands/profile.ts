@@ -1,38 +1,67 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getPlayer } from '../services/player.service';
+import { isActive } from '../utils/isActive';
 
 export const data = new SlashCommandBuilder()
-    .setName('profile')
-    .setDescription("Get user's profile");
+	.setName('profile')
+	.setDescription("Get user's profile");
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-    const discordId = interaction.user.id;
-    
-    try {
-        const player = await getPlayer(discordId);
-        
-        if (!player) {
-            await interaction.reply('No profile found for your Discord account.');
-            return;
-        }
-        
-        const profileInfo = [
-            `**Name:** ${player.name}`,
-            `**Province:** ${player.province}, ${player.city}`,
-            `**Classic Rank:** ${player.dlrank ?? 'N/A'}`,
-            `**Platformer Rank:** ${player.plrank ?? 'N/A'}`,
-            `**FL Rank:** ${player.flrank ?? 'N/A'}`,
-            `**Classic Rating:** ${player.rating ?? 0}`,
-            `**Platformer Rating:** ${player.plRating ?? 0}`,
-            `**Total FL Points:** ${player.totalFLpt ?? 0}`,
-            `**Records:** ${player.recordCount}`,
-            `**EXP:** ${player.exp}`,
-            `**Clan:** ${player.clans?.tag ?? 'None'}`,
-        ].join('\n');
-        
-        await interaction.reply(profileInfo);
-    } catch (error) {
-        console.error('Error fetching player profile:', error);
-        await interaction.reply('Failed to fetch profile. Please try again later.');
-    }
+	const discordId = interaction.user.id;
+
+	try {
+		const player = await getPlayer(discordId);
+
+		if (!player) {
+			await interaction.reply('Không tìm thấy tài khoản liên kết với tài khoản Discord này');
+			return;
+		}
+
+		const playerLink = `https://www.demonlistvn.com/player/${player.uid}`;
+		const borderColor = parseInt(player.borderColor.replace('#', ''), 16);
+		const avatarUrl = `https://cdn.demonlistvn.com/avatars/${player.uid}.${
+			isActive(player.supporterUntil) && player.isAvatarGif ? 'gif' : 'jpg'
+		}?version=${player.avatarVersion}`;
+		const bannerUrl = `https://cdn.demonlistvn.com/banners/${player.uid}.${
+			isActive(player.supporterUntil) && player.isAvatarGif ? 'gif' : 'jpg'
+		}?version=${player.avatarVersion}`;
+
+		const embed = new EmbedBuilder()
+			.setColor(isActive(player.supporterUntil) && player.borderColor ? borderColor : 0x0099ff)
+			.setTitle(`${player.name}`)
+			.setURL(playerLink)
+			.setDescription(`**Vị trí:** ${player.city}, ${player.province}`)
+			.setThumbnail(avatarUrl)
+			.addFields(
+				{
+					name: 'Classic',
+					value: `${player.rating ?? 0} #${player.dlrank ?? 'N/A'}`,
+					inline: true
+				},
+				{
+					name: 'Platformer',
+					value: `${player.plRating ?? 0} #${player.plrank ?? 'N/A'}`,
+					inline: true
+				},
+				{
+					name: 'Featured',
+					value: `${player.totalFLpt ?? 0} #${player.flrank ?? 'N/A'}`,
+					inline: true
+				},
+				{ name: 'Số bản ghi', value: `${player.recordCount}`, inline: true },
+				{ name: 'EXP', value: `${player.exp}`, inline: true },
+				{ name: 'Hội', value: `${player.clans?.tag ?? 'None'}`, inline: true }
+			)
+			.setTimestamp()
+			.setFooter({ text: 'Demon List VN' });
+
+		if (isActive(player.supporterUntil)) {
+			embed.setImage(bannerUrl);
+		}
+
+		await interaction.reply({ embeds: [embed] });
+	} catch (error) {
+		console.error('Error fetching player profile:', error);
+		await interaction.reply('Failed to fetch profile. Please try again later.');
+	}
 }
