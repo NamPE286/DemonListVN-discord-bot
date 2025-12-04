@@ -39,9 +39,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		}
 
 		const records = await getPlayerRecords(player.uid);
-
 		const listType = interaction.options.getString('list') as 'dl' | 'fl' | 'pl' | null;
-
 		let filteredRecords;
 
 		if (listType) {

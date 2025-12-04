@@ -36,7 +36,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 		const records = await getPlayerRecords(player.uid);
 		const listType = interaction.options.getString('list', true) as 'dl' | 'fl' | 'pl';
-
 		const filteredRecords = records[listType];
 
 		if (!filteredRecords || filteredRecords.length === 0) {
@@ -46,21 +45,12 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			return;
 		}
 
-		// Sort records by rating/points (descending) to get the best record
 		const sortedRecords = [...filteredRecords].sort((a, b) => {
 			const aValue = listType === 'fl' ? a.flPt ?? 0 : a.levels.rating ?? 0;
 			const bValue = listType === 'fl' ? b.flPt ?? 0 : b.levels.rating ?? 0;
 			return bValue - aValue;
 		});
-
 		const bestRecord = sortedRecords[0];
-
-		const listNames = {
-			dl: 'Classic',
-			fl: 'Featured',
-			pl: 'Platformer'
-		};
-
 		const formatTime = (ms: number) => {
 			const minutes = Math.floor(ms / 60000);
 			const seconds = Math.floor((ms % 60000) / 1000);
