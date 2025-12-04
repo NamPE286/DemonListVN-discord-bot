@@ -4,21 +4,29 @@ import { isActive } from '../utils/isActive';
 
 export const data = new SlashCommandBuilder()
 	.setName('profile')
-	.setDescription("Get user's profile");
+	.setDescription("Get user's profile")
+	.addUserOption(option =>
+		option
+			.setName('user')
+			.setDescription('The user whose profile to view')
+			.setRequired(false)
+	);
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-	const discordId = interaction.user.id;
+	const targetUser = interaction.options.getUser('user') ?? interaction.user;
+	const discordId = targetUser.id;
 
 	try {
 		const player = await getPlayer(discordId);
 
 		if (!player) {
-			await interaction.reply('Không tìm thấy tài khoản liên kết với tài khoản Discord này');
+			await interaction.reply(`Không tìm thấy tài khoản liên kết với tài khoản Discord ${targetUser.username}`);
 			return;
 		}
 
 		const playerLink = `https://www.demonlistvn.com/player/${player.uid}`;
-		const borderColor = parseInt(player.borderColor.replace('#', ''), 16);
+		const clanLink = `https://www.demonlistvn.com/clan/${player.clan ? player.clan : 0}`;
+		const borderColor = player.borderColor ? parseInt(player.borderColor.replace('#', ''), 16) : null;
 		const avatarUrl = `https://cdn.demonlistvn.com/avatars/${player.uid}.${
 			isActive(player.supporterUntil) && player.isAvatarGif ? 'gif' : 'jpg'
 		}?version=${player.avatarVersion}`;
@@ -48,9 +56,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 					value: `${player.totalFLpt ?? 0} #${player.flrank ?? 'N/A'}`,
 					inline: true
 				},
-				{ name: 'Số bản ghi', value: `${player.recordCount}`, inline: true },
-				{ name: 'EXP', value: `${player.exp}`, inline: true },
-				{ name: 'Hội', value: `${player.clans?.tag ?? 'None'}`, inline: true }
+			{ name: 'Số bản ghi', value: `${player.recordCount}`, inline: true },
+			{ name: 'EXP', value: `${player.exp}`, inline: true },
+			{ name: 'Hội', value: player.clans?.tag ? `[${player.clans.tag}](${clanLink})` : 'N/a', inline: true }
 			)
 			.setTimestamp()
 			.setFooter({ text: 'Demon List VN' });
