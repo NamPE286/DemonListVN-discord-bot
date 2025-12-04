@@ -3,14 +3,14 @@ import { getPlayer } from '../services/player.service';
 import { isActive } from '../utils/isActive';
 
 export const data = new SlashCommandBuilder()
-	.setName('profile')
-	.setDescription("Get user's profile")
-	.addUserOption(option =>
-		option
-			.setName('user')
-			.setDescription('The user whose profile to view')
-			.setRequired(false)
-	);
+    .setName('profile')
+    .setDescription("Lấy hồ sơ của người dùng")
+    .addUserOption(option =>
+        option
+            .setName('user')
+            .setDescription('Người dùng muốn xem hồ sơ')
+            .setRequired(false)
+    );
 
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const targetUser = interaction.options.getUser('user') ?? interaction.user;

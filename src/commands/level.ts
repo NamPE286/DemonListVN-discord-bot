@@ -3,9 +3,9 @@ import { searchLevel } from '../services/search.service';
 
 export const data = new SlashCommandBuilder()
 	.setName('level')
-	.setDescription('Search for a level')
+	.setDescription('Lấy thông tin của một level')
 	.addStringOption((option) =>
-		option.setName('query').setDescription('Level name or ID to search for').setRequired(true)
+		option.setName('query').setDescription('Tên hoặc ID của level').setRequired(true)
 	);
 
 export async function execute(interaction: ChatInputCommandInteraction) {
