@@ -26,9 +26,19 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN!);
 
 (async () => {
 	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`);
+		const isGuildDeploy = !!process.env.TEST_GUILD_ID;
+		
+		console.log(
+			`Started refreshing ${commands.length} application (/) commands ${
+				isGuildDeploy ? `to guild ${process.env.TEST_GUILD_ID}` : 'globally'
+			}.`
+		);
 
-		const data = (await rest.put(Routes.applicationCommands(process.env.CLIENT_ID!), {
+		const route = process.env.TEST_GUILD_ID
+			? Routes.applicationGuildCommands(process.env.CLIENT_ID!, process.env.TEST_GUILD_ID)
+			: Routes.applicationCommands(process.env.CLIENT_ID!);
+
+		const data = (await rest.put(route, {
 			body: commands
 		})) as any[];
 
