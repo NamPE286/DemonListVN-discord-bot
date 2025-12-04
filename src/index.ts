@@ -1,5 +1,3 @@
-import 'dotenv/config';
-
 import { Client, GatewayIntentBits, Collection, Events } from 'discord.js';
 import { loadCommands, Command } from './utils/command-loader.js';
 
