@@ -1,0 +1,21 @@
+# fly.toml app configuration file generated for demonlistvn-discord-bot on 2025-12-05T03:58:19+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'demonlistvn-discord-bot'
+primary_region = 'sin'
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[build]
+
+[[services]]
+protocol = "tcp"
+internal_port = 8080        
+auto_start_machines = true
+auto_stop_machines = false    
+min_machines_running = 1    
+
+[[vm]]
+  size = 'shared-cpu-1x'
