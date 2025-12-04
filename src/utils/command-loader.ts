@@ -29,13 +29,12 @@ export async function loadCommands() {
 
 		if ('data' in command && 'execute' in command) {
 			commands.set(command.data.name, command);
-			console.log(`✅ Loaded command: ${command.data.name}`);
 		} else {
-			console.log(
-				`⚠️ The command at ${filePath} is missing a required "data" or "execute" property.`
-			);
+			console.log(`The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
 	}
+
+	console.log(`Loaded ${commands.size} commands`);
 
 	return commands;
 }
