@@ -5,6 +5,8 @@ export const data = new SlashCommandBuilder()
 	.setName('help')
 	.setDescription('Hiển thị danh sách các lệnh có sẵn');
 
+const SUPPORTER_COMMANDS = ['list'];
+
 export async function execute(interaction: ChatInputCommandInteraction) {
 	const client = interaction.client as Client & { commands: Collection<string, Command> };
 	const commands = client.commands;
@@ -33,6 +35,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		
 		visibleCommandCount++;
 		const commandDescription = command.data.description;
+		const isSupporterOnly = SUPPORTER_COMMANDS.includes(commandName);
+		const supporterBadge = isSupporterOnly ? ' 💎 **[Chỉ dành cho Supporter]**' : '';
 
 		let optionsText = '';
 		const commandData = command.data.toJSON();
@@ -46,7 +50,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		}
 
 		embed.addFields({
-			name: `/${commandName}`,
+			name: `/${commandName}${supporterBadge}`,
 			value: `${commandDescription}${optionsText}`,
 			inline: false
 		});
