@@ -1,10 +1,11 @@
 {
     "name": "demonlistvn-discord-bot",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Discord bot for Demon List VN",
     "main": "src/index.ts",
     "type": "module",
     "scripts": {
+        "build": "tsc",
         "start": "bun src/index.ts",
         "dev": "bun --watch src/index.ts",
         "deploy": "bun src/deploy-commands.ts",
@@ -17,9 +18,11 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "discord.js": "^14.25.1"
+        "discord.js": "^14.25.1",
+        "dotenv": "^17.2.3"
     },
     "devDependencies": {
-        "@types/node": "^24.10.1"
+        "@types/node": "^24.10.1",
+        "typescript": "^5.0.0"
     }
 }
