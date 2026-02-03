@@ -49,7 +49,3 @@ export async function getPlayerSubmissions(uid: string): Promise<Submission[]> {
 
 	return submissions;
 }
-
-export function getMostRecentSubmission(submissions: Submission[]): Submission | null {
-	return submissions[0] ?? null;
-}
